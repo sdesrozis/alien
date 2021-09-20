@@ -15,7 +15,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 find_package(BLAS REQUIRED)
-target_link_libraries(alien_kernel_simplecsr INTERFACE ${BLAS_LIBRARIES})
+if (NOT TARGET BLAS::BLAS)
+    add_library(BLAS::BLAS INTERFACE IMPORTED GLOBAL)
+    target_link_libraries(BLAS::BLAS INTERFACE ${BLAS_LIBRARIES})
+    target_link_options(BLAS::BLAS INTERFACE ${BLAS_LINKER_FLAGS})
+endif(NOT TARGET BLAS::BLAS)
+
+target_link_libraries(alien_kernel_simplecsr INTERFACE BLAS::BLAS)
 
 SET(ALIEN_CBLAS_HEADER)
 
